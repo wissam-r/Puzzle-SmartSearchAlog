@@ -28,9 +28,11 @@ func ttabk2lines (l1 ,l2)
 
 func halfTtabk2lines (l1 ,l2)
 	if ((l1.m = l2.m and l1.d = l2.d)
-		and (((l1.p1 = l2.p1) and (pointInSpicificLine (l1 , l2.p2))) or
-		((l1.p2 = l2.p2) and (pointInSpicificLine (l1 , l2.p1)))))
-		return true
+		and (((l1.p1 = l2.p1) and (pointInSpicificLine (l1 , l2.p2)))
+		return true and "add l2.p"
+	else if ((l1.m = l2.m and l1.d = l2.d)
+		and (((l1.p2 = l2.p2) and (pointInSpicificLine (l1 , l2.p1))) 
+		return true and "not point to add"
 	else
 		return false
 
@@ -45,8 +47,11 @@ func getTkat3Point (l1 ,l2)
 
 func typeOfTkat3 (l1 ,l2 ,p)
 	if (pointInSpicificLine (l1 ,p)) and (pointInSpicificLine (l2 ,p)) and 
-		(l2.p2 = p)
-		return "end line point ALLOW"
+		(l2.p2 = p) and (l1.p1 != p)
+		return "end line point ALLOW and add end point"
+	else if (pointInSpicificLine (l1 ,p)) and (pointInSpicificLine (l2 ,p)) and 
+		(l2.p1 = p)
+		return "its the start point ALLOW"
 	else if (pointInSpicificLine (l1 ,p)) and (pointInSpicificLine (l2 ,p)) and 
 		(l2.p2 != p)
 		return "out if shape NOT ALLOW"'
@@ -92,6 +97,12 @@ func fixShape (shapeListOfPoint)
 		fixShape (shapeListOfPoint.tl.tl)
 	else
 		fixShape (shapeListOfPoint.tl)
+
+func clearRepeatedPoints (shapeListOfPoint)
+	if shapeListOfPoint.hd = shapeListOfPoint.tl.hd 
+		delete shapeListOfPoint.hd
+	else continue sacaaning
+
 
 
 

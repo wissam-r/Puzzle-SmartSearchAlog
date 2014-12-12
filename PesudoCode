@@ -1,0 +1,105 @@
+struct line (m  ,d  ,p1 ,p2)
+struct point (x ,y)
+
+func getLine (p1 ,p2)
+	return newLine  = 
+		m = (p2.y - p1.y) / (p2.x - p1.x)
+		d = m * (-p1.x) + p1.y
+
+func pointMakeLine (l ,p) 
+	if p.y = l.m * px + l.d
+		return true
+	else
+		return false
+
+func pointInSpicificLine (l ,p)
+	if (pointMakeLine (l ,p)) and
+		(((p.x - l.p1.x) * (p.x - l.p2.x) <= 0 )
+		or ((p.y - l.p1.y) * (p.y - l.p2.y) <=0 ))
+		return true
+	else
+		return false
+
+
+func ttabk2lines (l1 ,l2)
+	if l1.m = l2.m and l1.d = l2.d
+		and ((l1.p1 = l2.p1 and l1.p2 = l2.p2) or (l1.p1 = l2.p2 and l1.p2 = l2.p1))
+		return true
+
+func halfTtabk2lines (l1 ,l2)
+	if ((l1.m = l2.m and l1.d = l2.d)
+		and (((l1.p1 = l2.p1) and (pointInSpicificLine (l1 , l2.p2))) or
+		((l1.p2 = l2.p2) and (pointInSpicificLine (l1 , l2.p1)))))
+		return true
+	else
+		return false
+
+func getTkat3Point (l1 ,l2)
+	if l1.m = l2.m 
+		return false
+	else
+		define x = (l2.d - l1.d) / (l1.m - l2.m)
+		define y = l1.m * x + l1.d
+
+		return (x , y)
+
+func typeOfTkat3 (l1 ,l2 ,p)
+	if (pointInSpicificLine (l1 ,p)) and (pointInSpicificLine (l2 ,p)) and 
+		(l2.p2 = p)
+		return "end line point ALLOW"
+	else if (pointInSpicificLine (l1 ,p)) and (pointInSpicificLine (l2 ,p)) and 
+		(l2.p2 != p)
+		return "out if shape NOT ALLOW"'
+	else
+		return "in line ALLOW"
+
+func topLeftPoint (shapeListOfPoint  , maxPoint)
+	if shapeListOfPoint = null
+		return maxPoint
+	if maxPoint = null
+		maxPoint = shapeListOfPoint.hd
+		topLeftPoint (shapeListOfPoint.tl  , maxPoint)
+	else
+		if shapeListOfPoint.hd.y > maxPoint.y
+			topLeftPoint (shapeListOfPoint.tl  , shapeListOfPoint.hd)
+		else if shapeListOfPoint.hd.y  = maxPoint.y and shapeListOfPoint.hd.x < maxPoint.x
+			topLeftPoint (shapeListOfPoint.tl  , shapeListOfPoint.hd)
+		else
+			topLeftPoint (shapeListOfPoint.tl  , maxPoint)
+
+func makeGoodShapeList (shapeListOfPoint)
+	maxPoint = topLeftPoint (shapeListOfPoint , null)
+	if shapeListOfPoint.hd = maxPoint
+		return shapeListOfPoint
+	else
+		makeGoodShapeList (append ((shapeListOfPoint.tl) , (shapeListOfPoint.hd))
+
+func getHighWidthSheft(p1 , p2)
+	x = p1.x - p2.x
+	y = p1.y - p2.y
+	return (x , y)
+
+func shiftShape (shapeListOfPoint , x , y)
+	define newShape
+	forEach point in shapeListOfPoint
+		newShape.add (point.x -x point.y -y)
+	return newShape
+
+func fixShape (shapeListOfPoint)
+	newLine = (getLine (shapeListOfPoint.hd , shapeListOfPoint.tl.tl.hd))
+	if pointInSpicificLine (newLine , shapeListOfPoint.tl.hd)
+		delete shapeListOfPoint.tl.hd
+		fixShape (shapeListOfPoint.tl.tl)
+	else
+		fixShape (shapeListOfPoint.tl)
+
+
+
+
+
+
+
+
+
+
+

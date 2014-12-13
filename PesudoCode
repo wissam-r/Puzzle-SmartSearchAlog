@@ -26,11 +26,15 @@ func ttabk2lines (l1 ,l2)
 		and ((l1.p1 = l2.p1 and l1.p2 = l2.p2) or (l1.p1 = l2.p2 and l1.p2 = l2.p1))
 		return true
 
-func halfTtabk2lines (l1 ,l2)
+func halfTtabk2linesWithAdd (l1 ,l2)
 	if ((l1.m = l2.m and l1.d = l2.d)
 		and (((l1.p1 = l2.p1) and (pointInSpicificLine (l1 , l2.p2)))
 		return true and "add l2.p"
-	else if ((l1.m = l2.m and l1.d = l2.d)
+	else
+		return false
+
+func halfTtabk2linesWithNoAdd (l1 ,l2)
+	if ((l1.m = l2.m and l1.d = l2.d)
 		and (((l1.p2 = l2.p2) and (pointInSpicificLine (l1 , l2.p1))) 
 		return true and "not point to add"
 	else
@@ -44,6 +48,27 @@ func getTkat3Point (l1 ,l2)
 		define y = l1.m * x + l1.d
 
 		return (x , y)
+func tkat3End (l1 ,l2 ,p)
+	if (pointInSpicificLine (l1 ,p)) and (pointInSpicificLine (l2 ,p)) and 
+		(l2.p2 = p) and (l1.p1 != p)
+		return true "end line point ALLOW and add end point"
+	else
+		return false
+
+func tkat3Start (l1 ,l2 ,p)
+	if (pointInSpicificLine (l1 ,p)) and (pointInSpicificLine (l2 ,p)) and 
+		(l2.p1 = p)
+		return true "its the start point ALLOW"
+	else 
+		return false
+
+func tkat3Out (l1 ,l2 ,p)
+	else if (pointInSpicificLine (l1 ,p)) and (pointInSpicificLine (l2 ,p)) and 
+		(l2.p2 != p)
+		return true "out of boundryy FALSEEEEEE"
+	else
+		return false
+
 
 func typeOfTkat3 (l1 ,l2 ,p)
 	if (pointInSpicificLine (l1 ,p)) and (pointInSpicificLine (l2 ,p)) and 
@@ -101,7 +126,36 @@ func fixShape (shapeListOfPoint)
 func clearRepeatedPoints (shapeListOfPoint)
 	if shapeListOfPoint.hd = shapeListOfPoint.tl.hd 
 		delete shapeListOfPoint.hd
-	else continue sacaaning
+	else continue sacaaning until end of shape
+
+
+func lineShapeState (l1 , shapeListOfPoint , shapeListOfPointMain)
+	define endpoint = false 
+	define l2 = null
+	if shapeListOfPoint.tl == null
+		endpoint = true
+		l2 = getLine (shapeListOfPoint.hd , shapeListOfPointMain.hd)
+	else
+		l2 = getLine (shapeListOfPoint.hd , shapeListOfPoint.tl.hd)
+
+	if ttabk2lines (l2 , l1)
+		return '()
+	else if halfTtabk2linesWithAdd (l2 , l1)
+		return '(l1.p2)
+	else if halfTtabk2linesWithNoAdd (l2 , l1)
+		return '()
+	else 
+		define tkat3Point = getTkat3Point (l2 , l1)
+		if tkat3End (l2 , l1 , tkat3Point )
+			return '(l1.p2)
+		else if tkat3Start (l2 , l1 , tkat3Point )
+			return '()
+		else if tkat3Out (l2 , l1 , tkat3Point )
+			return false Rais EXPTION
+		else
+			return '(l1.p2)
+
+
 
 
 

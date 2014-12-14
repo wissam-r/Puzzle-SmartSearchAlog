@@ -170,17 +170,25 @@ func lineShapeState (l1 , shapeListOfPoint , shapeListOfPointMain)
 	
 func shapeToShapeState (smallShape , smallShape2 , mainShape)
 	define endpoint = false
+	addPointList = '()
+	deletePointList = '()
 	while (endpoint ==false) {
-	if smallShape.tl == null
-		endpoint = true
-		l = getLine (smallShape.hd , smallShape2.hd)
-	else
-		l = getLine (smallShape.hd , smallShape.tl.hd)
-		smallShape = smallShape.tl
-	resultlist = lineShapeState (l , mainShape , mainShape )
+		if smallShape.tl == null
+			endpoint = true
+			l = getLine (smallShape.hd , smallShape2.hd)
+		else
+			l = getLine (smallShape.hd , smallShape.tl.hd)
+			smallShape = smallShape.tl
+		resultList = lineShapeState (l , mainShape , mainShape )
+		addPointList = (append reslutList.hd addPointList )
+		deletePointList = (append resultList.tl.hd deletePointList)
 	}
-
-
+	mainShapeAfterDelete  = deletePoint(mainShape , deletePointList)
+	mainShapeAfterAdd = (append mainShapeAfterDelete addPointList)
+	mainShapeAfterDeletingRepeatedPoint = (clearRepeatedPoints mainShapeAfterAdd)
+	mainShapeAfterFixing  = (fixShape mainShapeAfterDeletingRepeatedPoint)
+	
+	return mainShapeAfterFixing
 
 
 

@@ -3,10 +3,13 @@
 (struct point (x y)  #:transparent) ; a point ex : point 3 4
 (struct line (m d p)   #:transparent) ;  a line m : mail ,  d : offset p :point
 (struct limitedline (l p1 p2)  #:transparent) ; a limited line l :line p1 : point1 , p2 : point2 ex : line
+(struct HighWidth (x y)  #:transparent)
 
 (define (equalPoints p1 p2)(
-	and (equal? (point-x p1) (point-x p2))
-		(equal? (point-y p1) (point-y p2))
+	if (or (equal? p1 #f) (equal? p2 #f))
+	#f
+	(and (equal? (point-x p1) (point-x p2))
+		(equal? (point-y p1) (point-y p2)))
 	))
 
 (equalPoints (point 1 2) (point 1 2)) ; given #t  true
@@ -84,12 +87,6 @@
 (halfMatch2LinesByEnd (limitedline (line 1 2 (point 1 4)) (point 1 2) (point 2 2)) (limitedline (line 1 2 (point 1 4)) (point 10 2) (point 3 2))) ; given #f  true
 
 (define (getIntersectionPoint l1 l2)(
-	; if (equalLines l1 l2)
-	; 	#f
-	; 	(let* ([x ( / ( - (line-d l2) (line-d l1)) (-(line-m l1) (line-m l2)))]
-	; 		[y (+ (* (line-m l1) x) (line-d l1))]
-	; 		)
-	; 		(point x y))
 	cond [(equalLines l1 l2) #f]
 		[(equal? (line-m l1) "undefined") (point (point-x (line-p l1)) (+ (* (line-m l2) (point-x (line-p l1))) (line-d l2)))]
 		[(equal? (line-m l2) "undefined") (point (point-x (line-p l2)) (+ (* (line-m l1) (point-x (line-p l2))) (line-d l1)))]
@@ -104,10 +101,56 @@
 (getIntersectionPoint (line 1 1 (point 1 2)) (line -1 1 (point 1 0))) ; given ( point 0 1 ) ture
 
 (define (endIntersection ll1 ll2 p) (
-	and (pointInSpicificLine ll1 p) (pointInSpicificLine ll2 p) (equalPoints (limitedline-p2 ll2) p)
+	if (equal? p #f)
+	#f
+	(and (pointInSpicificLine ll1 p) (pointInSpicificLine ll2 p) (equalPoints (limitedline-p2 ll2) p))
 	))
 
 (define limitedline-test1 (getLine (point 3 1) (point 0 1)))
 (define limitedline-test2 (getLine (point 0 3) (point 0 0)))
-(endIntersection limitedline-test2 limitedline-test1 
-	(getIntersectionPoint (limitedline-l limitedline-test2) (limitedline-l limitedline-test1)))
+(define limitedline-test3 (getLine (point 3 1) (point 0 1)))
+(endIntersection limitedline-test2 limitedline-test3
+	(getIntersectionPoint (limitedline-l limitedline-test2) (limitedline-l limitedline-test3)))
+(endIntersection limitedline-test1 limitedline-test3
+	(getIntersectionPoint (limitedline-l limitedline-test1) (limitedline-l limitedline-test3)))
+
+(define (startIntersection ll1 ll2 p) (
+	if (equal? p #f)
+	#f
+	(and (pointInSpicificLine ll1 p) (pointInSpicificLine ll2 p) (equalPoints (limitedline-p1 ll2) p))
+	))
+
+(define limitedline-test5 (getLine (point 0 1) (point 3 1)))
+(define limitedline-test4 (getLine (point 0 3) (point 0 0)))
+
+(startIntersection limitedline-test4 limitedline-test5
+	(getIntersectionPoint (limitedline-l limitedline-test4) (limitedline-l limitedline-test5)))
+(startIntersection limitedline-test5 limitedline-test4
+	(getIntersectionPoint (limitedline-l limitedline-test5) (limitedline-l limitedline-test4)))
+
+(define (outIntersection ll1 ll2 p) (
+	if (equal? p #f)
+	#f
+	(and (pointInSpicificLine ll1 p) (pointInSpicificLine ll2 p) (not (equalPoints (limitedline-p2 ll2) p)))
+	))
+(define limitedline-test6 (getLine (point 0 1) (point 4 1)))
+(define limitedline-test7 (getLine (point 0 3) (point 0 0)))
+
+(outIntersection limitedline-test6 limitedline-test7
+	(getIntersectionPoint (limitedline-l limitedline-test6) (limitedline-l limitedline-test7)))
+
+(define (topLeftPoint shape maxPoint) (
+	if (null? shape)
+		maxPoint
+		(if (null? maxPoint) 
+			(let ([maxPoint (car shape)])
+				(topLeftPoint (cdr shape) maxPoint)
+				)
+			(cond [(> (point-y (car shape)) (point-y maxPoint)) (topLeftPoint (cdr shape) (car shape))]
+				[(and (equal? (point-y (car shape)) (point-y maxPoint)) (< (point-x (car shape)) (point-x maxPoint)))
+					 (topLeftPoint (cdr shape) (car shape))]
+				[#t (topLeftPoint (cdr shape) maxPoint)]
+					 )
+			)
+	))
+(topLeftPoint (list (point 1 1) (point 1 0) (point 0 0) (point 0 1) ) null )

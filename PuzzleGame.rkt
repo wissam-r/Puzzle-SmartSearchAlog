@@ -153,4 +153,66 @@
 					 )
 			)
 	))
-(topLeftPoint (list (point 1 1) (point 1 0) (point 0 0) (point 0 1) ) null )
+(define shape (list (point 1 1) (point 1 0) (point 0 0) (point 0 1)))
+(topLeftPoint shape null)
+
+(define (makeGoodShape shape maxPoint)(
+	if (equal? (car shape) maxPoint)
+		shape
+		(makeGoodShape (append (cdr shape) (list (car shape))) maxPoint)
+	))
+(makeGoodShape shape (topLeftPoint shape null))
+
+(define (getShiftCor p1 p2) (
+	HighWidth ( - (point-x p1) (point-x p2)) ( - (point-y p1) (point-y p2)) 
+	))
+
+(getShiftCor (point 0 2) (point 0 1))
+
+(define (shiftShape shape shift)(
+	if (null? shape)
+		'()
+		(cons (point (- (point-x (car shape)) (HighWidth-x shift))(- (point-y (car shape)) (HighWidth-y shift)))
+			(shiftShape (cdr shape) shift))
+	))
+
+
+(define shape1 (list (point 2 1) (point 2 0) (point 1 0) (point 1 1)))
+ 
+ (shiftShape (makeGoodShape shape1 (topLeftPoint shape1 null)) 
+ 	(getShiftCor (car (makeGoodShape shape1 (topLeftPoint shape1 null)) )
+ 	 (car (makeGoodShape shape (topLeftPoint shape null)) )))
+
+(define shape2 (list (point 2 1) (point 2 0.5) (point 2 0) (point 1 0) (point 1 1)))
+(define (removeLinePoints shape shapeMain) (
+ 	if (null? (cddr shape))
+ 		(if (pointInSpicificLine (getLine (car shape) (car shapeMain))  (cadr shape))
+ 			(cons (car shape) '())
+ 			shape
+ 			)
+ 		(if (pointInSpicificLine (getLine (car shape)  (caddr shape)) (cadr shape))
+ 			(cons (car shape) (removeLinePoints (cddr shape) shapeMain))
+ 			(cons (car shape) (removeLinePoints (cdr shape) shapeMain))
+ 			)
+ 	))
+
+(removeLinePoints shape2 shape2)
+
+(define (clearRepeatedPoints shape shapeMain)(
+	if (null? (cdr shape))
+		(if (equalPoints (car shape) (car shapeMain))
+			'()
+			(cons (car shape) '())
+			)
+		(if (equalPoints (car shape) (cadr shape))
+			(clearRepeatedPoints (cdr shape) shapeMain)
+			(cons (car shape) (clearRepeatedPoints (cdr shape) shapeMain))
+			)
+
+	))
+
+(define shape4 (list (point 2 1) (point 2 0) (point 1 0) (point 1 1) (point 2 1) (point 2 1)))
+(clearRepeatedPoints shape4 shape4)
+
+
+

@@ -180,15 +180,35 @@ func shapeToShapeState (smallShape , smallShape2 , mainShape)
 			l = getLine (smallShape.hd , smallShape.tl.hd)
 			smallShape = smallShape.tl
 		resultList = lineShapeState (l , mainShape , mainShape )
+		if resultList ==  false
+			return false "out the shape of boundries"
 		addPointList = (append reslutList.hd addPointList )
 		deletePointList = (append resultList.tl.hd deletePointList)
 	}
-	mainShapeAfterDelete  = deletePoint(mainShape , deletePointList)
+	mainShapeAfterDelete  = ( deletePoint mainShape  deletePointList)
 	mainShapeAfterAdd = (append mainShapeAfterDelete addPointList)
 	mainShapeAfterDeletingRepeatedPoint = (clearRepeatedPoints mainShapeAfterAdd)
 	mainShapeAfterFixing  = (fixShape mainShapeAfterDeletingRepeatedPoint)
-	
+
 	return mainShapeAfterFixing
+
+func mainFunc (mainShape , listOfShapes )
+	if mainShape == null
+		return '() "DONE"
+	while (shape in  listOfShapes)
+		shapeTestResult = (shapeToShapeState listOfShapes.hd listOfShapes.hd mainShape)
+		if shapeTestResult == false
+			continue
+		else
+			remainingShapes = (mainFunc shapeTestResult , (remove shape listOfShapes) )
+			if (remainingShapes == false)
+				continue
+			else
+				return (append shape remainingShapes)
+
+	return false
+
+
 
 
 

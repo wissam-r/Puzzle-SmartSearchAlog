@@ -193,9 +193,9 @@ func shapeToShapeState (smallShape , smallShape2 , mainShape)
 	return mainShapeAfterFixing
 
 func mainFunc (mainShape , listOfShapes )
-	if mainShape == null
+	if mainShape == '()
 		return '() "DONE"
-	while (shape in  listOfShapes)
+	while (shape in  listOfShapes){
 		shapeTestResult = (shapeToShapeState listOfShapes.hd listOfShapes.hd mainShape)
 		if shapeTestResult == false
 			continue
@@ -204,7 +204,7 @@ func mainFunc (mainShape , listOfShapes )
 			if (remainingShapes == false)
 				continue
 			else
-				return (append shape remainingShapes)
+				return (append shape remainingShapes) }
 
 	return false
 

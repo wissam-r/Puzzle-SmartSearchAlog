@@ -5,25 +5,6 @@
 (struct limitedline (l p1 p2)  #:transparent) ; a limited line l :line p1 : point1 , p2 : point2 ex : line
 (struct HighWidth (x y)  #:transparent)
 
-(define rotatePointByAngle (lambda (origin rpoint angleDegrees)
-                             (define angle (degrees->radians angleDegrees))       
-                             (point (exact-round (+ (- (* (cos angle) (- (point-x rpoint) (point-x origin))) (* (sin angle) (- (point-y rpoint)(point-y origin)))) (point-x origin))) 
-                                    (exact-round (+ (- (* (sin angle) (- (point-x rpoint) (point-x origin))) (* (cos angle) (- (point-y rpoint)(point-y origin)))) (point-y origin)))
-                             )
-                             ))
-
-(define rotateShapeByDegrees (lambda (origin shape angleDegrees) (
-                                                  cond [(null? shape) '()]
-                                                       [else (cons (rotatePointByAngle origin (car shape) angleDegrees) (rotateShapeByDegrees origin (cdr shape) angleDegrees))] 
-                                                  )))
-(define rotateShapeAllAngles (lambda (shape) 
-                                               (define origin (car shape))
-                                               (list shape (list
-                                                                 (rotateShapeByDegrees origin shape 90)
-                                                                 (rotateShapeByDegrees origin shape 180)
-                                                                 (rotateShapeByDegrees origin shape 270)
-                                                            )
-                                               )))
 
 (define (equalPoints p1 p2)(
 	if (or (equal? p1 #f) (equal? p2 #f))
@@ -269,7 +250,7 @@
 		(cond [(match2Lines ll1 ll2)  (if (and isItFirstLine isItShapeFirstLine) 
 											(list '() (append removeList listOfStartPoint listOfEndPoint))
 											(if isItFirstLine
-												#f
+												(begin (print "out") (print ll1) (print ll2)#f)
 												(list '() (append removeList listOfStartPoint listOfEndPoint))
 											))]
 			[(halfMatch2LinesByStart ll1 ll2) (list listOfEndPoint listOfStartPoint)]
@@ -335,7 +316,7 @@
 (define shape13 (list (point 0 2) (point 1 2) (point 1 1) (point 0 1) ))
 (define shape14 (list (point 1 2) (point 2 2) (point 2 1) (point 1 1) ))
 (define shape15 (list (point 0 1) (point 2 1) (point 2 0) (point 0 0) ))
-(define shape16 (list (point 0 1) (point 2 1) (point 2 0) (point 0 10) ))
+(define shape16 (list (point 0 1) (point 2 1) (point 2 0) (point 0 10)))
 
 
 
@@ -343,9 +324,7 @@
 (print "test")
 (lineToShapeState limoLine10 shape12 shape12 null null #f)
 (lineToShapeState limoLine11 shape12 shape12 null null #f)
-; ; limoLine12 
 (lineToShapeState limoLine12 shape12 shape12 null null #f)
-
 (lineToShapeState limoLine13 shape12 shape12 null null #f)
 ; (getLine (point 0.5 1) (point 0.5 0.5))
 ; (getIntersectionPoint (limitedline-l debug) (limitedline-l limoLine12))
@@ -365,16 +344,18 @@
 ; (pointInSpicificLine (getLine (point 1 1 ) (point 2 2 )) (point -1 1))  ; given #f  true
 
 
-(define (mainFunc mainShape listOfShapes currentShape) (
+(define (backTrackAlgo mainShape listOfShapes currentShape) (
 	cond [(null? mainShape) '()]
 		[(equal? (length listOfShapes)  currentShape) #f]
-		[#t (let (
-			[newShape (shapeToShapeState (list-ref listOfShapes currentShape) (list-ref listOfShapes currentShape)  mainShape null null)])
+		[#t (let* (
+			[shiftCor (getShiftCor (topLeftPoint (list-ref listOfShapes currentShape) null) (topLeftPoint mainShape null))]
+			[goodShape (shiftShape (list-ref listOfShapes currentShape) shiftCor)]
+			[newShape (shapeToShapeState goodShape goodShape mainShape null null)])
 			(if (equal? newShape #f)
-				(mainFunc mainShape listOfShapes (+ currentShape 1))
-				(let ([remainingShape (mainFunc newShape (remove (list-ref listOfShapes currentShape) listOfShapes) 0)])
+				(backTrackAlgo mainShape listOfShapes (+ currentShape 1))
+				(let ([remainingShape (backTrackAlgo newShape (remove (list-ref listOfShapes currentShape) listOfShapes) 0)])
 						(if (equal? remainingShape #f)
-							(mainFunc mainShape listOfShapes (+ currentShape 1))
+							(backTrackAlgo mainShape listOfShapes (+ currentShape 1))
 							(cons (list-ref listOfShapes currentShape) remainingShape))
 					)
 
@@ -383,6 +364,74 @@
 	))
 
 
-(mainFunc shape12 (list shape14 shape15 shape16 shape13) 0)
+(backTrackAlgo shape12 (list shape14 shape15 shape16 shape13) 0)
+
+(define (fixShapeList shapeList)(
+	if (null? shapeList)
+		'()
+		(let*(
+				[mainShapeAfterDeletingRepeatedPoint (clearRepeatedPoints (car shapeList) (car shapeList))]
+				[mainShapeAfterFixing (removeLinePoints mainShapeAfterDeletingRepeatedPoint mainShapeAfterDeletingRepeatedPoint)]
+				[newMainShape (makeGoodShape mainShapeAfterFixing (topLeftPoint mainShapeAfterFixing null))]
+			)
+		(cons newMainShape (fixShapeList (cdr shapeList)))
+		)
+	))
+
+(define (fixShapeMain mainShape)(
+	if (null? mainShape)
+		'()
+		(let*(
+				[mainShapeAfterDeletingRepeatedPoint (clearRepeatedPoints mainShape mainShape)]
+				[mainShapeAfterFixing (removeLinePoints mainShapeAfterDeletingRepeatedPoint mainShapeAfterDeletingRepeatedPoint)]
+				[newMainShape (makeGoodShape mainShapeAfterFixing (topLeftPoint mainShapeAfterFixing null))]
+			)
+		newMainShape)
+		
+	))
+
+(define shape20 (list  (point 0 0) (point 0 2) (point 2 2) (point 2 0) (point 0 0) ))
+(define shape21 (list   (point 1 1) (point 0 1)(point 0 2) (point 1 2)  ))
+(fixShapeList (list shape20 shape21))
+
+(fixShapeMain shape20)
+
+(define (mainFunc mainShape listOfShapes)(
+
+	backTrackAlgo (fixShapeMain mainShape) (fixShapeList listOfShapes) 0
+	))
+
+(define shape33 (list (point 0 2) (point 2 2) (point 2 0) (point 0 0) ))
+(define shape44 (list (point 0 2) (point 1 2) (point 1 1) (point 0 1) ))
+(define shape55 (list (point 1 2) (point 2 2) (point 2 1) (point 1 1) ))
+(define shape66 (list (point 0 1) (point 2 1) (point 2 0) (point 0 0) ))
+(define shape77 (list (point 0 1) (point 2 1) (point 2 0) (point 0 5)))
+
+(mainFunc shape33 (list shape55 shape66 shape77 shape44))
+
+(define shape88 (list (point 0 2) (point 2 2) (point 2 0) ))
+(define shape99 (list (point 0 2) (point 2 0) (point 0 0)  ))
+(mainFunc shape33 (list shape77 shape99 shape88))
+
+
+(define shape777 (list (point 1 3) (point 3 3) (point 3 1) (point 1 1) ))
+ 
+(define shape333 (list (point 0 2) (point 1 2) (point 2 1) (point 0 1) ))
+(define shape444 (list (point 1 2) (point 2 2) (point 2 1)  ))
+(define shape555 (list (point 0 1) (point 1 1) (point 1 0) (point 0 0) ))
+(define shape666 (list (point 1 1) (point 2 1) (point 2 0) (point 1 0) ))
+(define shape888 (list (point 0 1) (point 1 2) (point 2 0) (point 0 0)))
+
+
+(mainFunc shape777 (list  shape888 shape555 shape666 shape333 shape444 ))
+
+(define shape3333 (list (point 0 3) (point 4 3) (point 4 2) (point 3 1) (point 2 1)))
+(define shape4444 (list (point 4 2) (point 4 0) (point 3 0) (point 3 1) ))
+(define shape5555 (list (point 2 1) (point 3 1) (point 3 0) (point 0 0) ))
+(define shape6666 (list (point 0 3) (point 2 1) (point 0 0)  ))
+(define shape8888 (list (point 0 3) (point 4 3) (point 4 0) (point 0 0)))
+(mainFunc shape8888 (list  shape3333 shape6666 shape5555 shape4444 ))
+
+; (getLine (point 4 3) (point 3 2))
 
 

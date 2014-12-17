@@ -129,12 +129,13 @@ func clearRepeatedPoints (shapeListOfPoint)
 	else continue sacaaning until end of shape
 
 
-func lineShapeState (l1 , shapeListOfPoint , shapeListOfPointMain)
+func lineShapeState (l1 , shapeListOfPoint , shapeListOfPointMain , firstLine )
 	define endpoint = false 
 	define startPoint = false
 	define addresult ='()
 	define removeresult = '()
 	define l2 = null
+
 	while(endpoint == false){
 	
 	if shapeListOfPoint.tl == null
@@ -145,8 +146,15 @@ func lineShapeState (l1 , shapeListOfPoint , shapeListOfPointMain)
 		shapeListOfPoint = shapeListOfPoint.tl
 
 	if ttabk2lines (l2 , l1)
-		removeresult += '(l1.p1 , l1.p2)
-		return list (addresult removeresult)
+		if (firstLine and (l2 == (getline (shapeListOfPointMain.hd) (shapeListOfPointMain.tl.hd))))
+			removeresult += '(l1.p1 , l1.p2)
+			return list (addresult removeresult)
+		else if (firstLine)
+			return false
+		else
+			removeresult += '(l1.p1 , l1.p2)
+			return list (addresult removeresult)
+
 	else if halfTtabk2linesWithAdd (l2 , l1)
 		removeresult += '(l1.p1 )
 		result += '(l1.p2)

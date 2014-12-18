@@ -276,11 +276,11 @@
 (define limoLine6 (getLine (point 0 1) (point 1 0)))
 
 
-; (lineToShapeState limoLine1 shape10 shape10 null null #f)
-; (lineToShapeState limoLine2 shape10 shape10 null null #f)
-; (lineToShapeState limoLine3 shape10 shape10 null null #f)
-; (lineToShapeState limoLine4 shape10 shape10 null null #f)
-; (lineToShapeState limoLine6 shape10 shape10 null null #f)
+(lineToShapeState limoLine1 shape10 shape10 null null #f)
+(lineToShapeState limoLine2 shape10 shape10 null null #f)
+(lineToShapeState limoLine3 shape10 shape10 null null #f)
+(lineToShapeState limoLine4 shape10 shape10 null null #f)
+(lineToShapeState limoLine6 shape10 shape10 null null #f)
 
 (define (shapeToShapeState smallShape smallShapeMain mainShape addList removeList)(
 	if (null? smallShape)
@@ -306,7 +306,6 @@
 
 
 	))
-(define debug (getLine (point 2 0) (point 0 0)))
 (define limoLine10 (getLine (point 0 2) (point 1 2)))
 (define limoLine11 (getLine (point 1 2) (point 1 1)))
 (define limoLine12 (getLine (point 1 1) (point 0 1)))
@@ -319,29 +318,10 @@
 (define shape16 (list (point 0 1) (point 2 1) (point 2 0) (point 0 10)))
 
 
-
-; (halfMatch2LinesByStart debug limoLine10)
-(print "test")
 (lineToShapeState limoLine10 shape12 shape12 null null #f)
 (lineToShapeState limoLine11 shape12 shape12 null null #f)
 (lineToShapeState limoLine12 shape12 shape12 null null #f)
 (lineToShapeState limoLine13 shape12 shape12 null null #f)
-; (getLine (point 0.5 1) (point 0.5 0.5))
-; (getIntersectionPoint (limitedline-l debug) (limitedline-l limoLine12))
-; (outIntersection debug limoLine11 (getIntersectionPoint (limitedline-l debug) (limitedline-l limoLine11)))
-; (pointInLine (limitedline-l debug) (point 1 0) )
-; (pointInSpicificLine debug (point 1 0) )
-; (define shape11 (list (point 0 1) (point 0.5 1) (point 0.5 0) (point 0 0.5) ))
-; (shapeToShapeState shape13 shape13 shape13 null null)
-
-; (shapeToShapeState shape13 shape13 shape12 null null)
-; (shapeToShapeState shape14 shape14 (shapeToShapeState shape13 shape13 shape12 null null) null null)
-(shapeToShapeState shape15 shape15 (shapeToShapeState shape14 shape14 (shapeToShapeState shape13 shape13 shape12 null null) null null)
- null null)
-
-; (print "test")
-; (pointInSpicificLine (getLine (point 1 1 ) (point 2 2 )) (point 1.5 1.5)) ; given #t  true
-; (pointInSpicificLine (getLine (point 1 1 ) (point 2 2 )) (point -1 1))  ; given #f  true
 
 
 (define (backTrackAlgo mainShape listOfShapes currentShape) (
@@ -406,8 +386,8 @@
 (define shape55 (list (point 1 2) (point 2 2) (point 2 1) (point 1 1) ))
 (define shape66 (list (point 0 1) (point 2 1) (point 2 0) (point 0 0) ))
 (define shape77 (list (point 0 1) (point 2 1) (point 2 0) (point 0 5)))
-
 (mainFunc shape33 (list shape55 shape66 shape77 shape44))
+
 
 (define shape88 (list (point 0 2) (point 2 2) (point 2 0) ))
 (define shape99 (list (point 0 2) (point 2 0) (point 0 0)  ))
@@ -415,15 +395,13 @@
 
 
 (define shape777 (list (point 1 3) (point 3 3) (point 3 1) (point 1 1) ))
- 
 (define shape333 (list (point 0 2) (point 1 2) (point 2 1) (point 0 1) ))
 (define shape444 (list (point 1 2) (point 2 2) (point 2 1)  ))
 (define shape555 (list (point 0 1) (point 1 1) (point 1 0) (point 0 0) ))
 (define shape666 (list (point 1 1) (point 2 1) (point 2 0) (point 1 0) ))
 (define shape888 (list (point 0 1) (point 1 2) (point 2 0) (point 0 0)))
-
-
 (mainFunc shape777 (list  shape888 shape555 shape666 shape333 shape444 ))
+
 
 (define shape3333 (list (point 0 3) (point 4 3) (point 4 2) (point 3 1) (point 2 1)))
 (define shape4444 (list (point 4 2) (point 4 0) (point 3 0) (point 3 1) ))
@@ -431,7 +409,5 @@
 (define shape6666 (list (point 0 3) (point 2 1) (point 0 0)  ))
 (define shape8888 (list (point 0 3) (point 4 3) (point 4 0) (point 0 0)))
 (mainFunc shape8888 (list  shape3333 shape6666 shape5555 shape4444 ))
-
-; (getLine (point 4 3) (point 3 2))
 
 
